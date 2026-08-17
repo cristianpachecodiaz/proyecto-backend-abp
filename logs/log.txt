@@ -1,0 +1,4 @@
+[2026-08-17 20:12:41] Ruta accedida: GET /api/status
+[2026-08-17 20:12:43] Ruta accedida: GET /favicon.ico
+[2026-08-17 20:55:31] Ruta accedida: GET /
+[2026-08-17 20:56:18] Ruta accedida: GET /

@@ -1,30 +1,51 @@
-import 'dotenv/config'; // Forma directa de inicializar dotenv en ES Modules
 import express from 'express';
+import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// IMPORTANTE: En ES Modules es obligatorio colocar la extensión .js en archivos locales
-import requestLogger from './middlewares/logger.js';
-import routes from './routes/index.js';
+// Conexión a Base de Datos y Modelos
+import sequelize from './config/database.js';
+import User from './models/User.js';
+import Tarea from './models/Tarea.js';
 
-// Recreando __dirname en el archivo principal
+// Definicion de relaciones
+User.hasMany(Tarea, { foreignKey: 'usuarioId', as: 'tareas'});
+Tarea.belongsTo(User, { foreignKey: 'usuarioId', as: 'usuario'});
+
+
+// Rutas y Middlewares
+import apiRoutes from './routes/index.js';
+import requestLogger from './middlewares/logger.js'; 
+
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middlewares
 app.use(express.json());
-app.use(requestLogger);
+app.use(requestLogger); 
 
-// Servir contenido web estático
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/api', apiRoutes);
 
-// Enrutador modularizado
-app.use('/api', routes);
+// Inicialización
+const iniciarServidor = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Conexión a la base de datos PostgreSQL establecida con éxito.');
+        
+        await sequelize.sync({ alter: true });
+        console.log('Modelos sincronizados correctamente.');
 
-// Inicialización del servidor
-app.listen(PORT, () => {
-    console.log(`Servidor iniciado y escuchando en el puerto ${PORT}`);
-});
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => {
+            console.log(`Servidor iniciado y escuchando en el puerto ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Error al iniciar el servidor o conectar a la BD:', error);
+    }
+};
+
+iniciarServidor();

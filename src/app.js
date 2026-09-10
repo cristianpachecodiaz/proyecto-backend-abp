@@ -27,7 +27,10 @@ const app = express();
 app.use(express.json());
 app.use(requestLogger); 
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Rutas estáticas ajustadas para subir un nivel desde la carpeta src/
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use(express.static(path.join(__dirname, '../public')));
+
 app.use('/api', apiRoutes);
 
 // Inicialización

@@ -2,6 +2,39 @@ import User from '../models/User.js';
 import Tarea from '../models/Tarea.js';
 import sequelize from '../config/database.js';
 
+import jwt from 'jsonwebtoken';
+// Ajusta la ruta a tu modelo
+
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ where: { email } });
+
+        // Nota: En producción, usa bcrypt para comparar contraseñas encriptadas.
+        if (!user || user.password !== password) {
+            return res.status(401).json({ status: 'error', message: 'Credenciales inválidas' });
+        }
+
+        // Generar JWT
+        const token = jwt.sign(
+            { id: user.id, email: user.email }, 
+            process.env.JWT_SECRET || 'mi_secreto_super_seguro', 
+            { expiresIn: '1h' }
+        );
+
+        res.json({ status: 'success', message: 'Autenticación exitosa', token });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Error en el servidor', data: error.message });
+    }
+};
+
+export const uploadFile = (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ status: 'error', message: 'Por favor, proporcione un archivo.' });
+    }
+    res.json({ status: 'success', message: 'Archivo subido correctamente', data: req.file.filename });
+};
+
 // Crear un nuevo usuario (POST)
 export const crearUsuario = async (req, res) => {
     try {

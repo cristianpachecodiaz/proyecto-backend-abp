@@ -1,4 +1,67 @@
-## Proyecto Módulo 7: Node & Express con PostgreSQL y Sequelize - ABP (Final)
+**Proyecto Módulo 8: Implementación de API Backend Node Express (Final)
+**Autor: Cristian Pacheco Díaz
+
+Módulo 8: CONSTRUCCIÓN DE APIS RESTFUL Y SEGURIDAD
+
+Este repositorio contiene la tercera y última fase de la aplicación backend. En esta etapa se ha consolidado el sistema en una API RESTful profesional, incorporando manejo de archivos y un sistema de autenticación seguro.
+
+1. Seguridad (JWT) y Subida de Archivos
+¿Qué se integró en esta fase?
+Evolucionamos la aplicación para incluir mecanismos de protección perimetral y manejo de datos multimedia, necesarios en cualquier entorno de producción.
+
+Características implementadas:
+
+Autenticación mediante JWT: Se integró jsonwebtoken para validar la identidad de los usuarios. Al realizar un POST al endpoint /api/login con credenciales válidas, la API despacha un token firmado con 1 hora de validez.
+
+Protección de Rutas (Middleware): Se desarrolló un middleware de seguridad que verifica la presencia y validez del token en los headers (Authorization: Bearer <token>) antes de permitir el acceso a rutas destructivas como PUT o DELETE.
+
+Manejo de Archivos (Multer): Se integró multer para procesar peticiones multipart/form-data. El middleware filtra estrictamente las subidas para permitir solo imágenes y limita su tamaño a un máximo de 2MB, almacenando los ficheros en la carpeta pública uploads/.
+
+2. Endpoints Añadidos y Protegidos
+Gestión de Sesiones y Archivos:
+
+POST /api/login - (Público) Autentica al usuario y devuelve el token JWT.
+
+POST /api/upload - (Público) Recibe y almacena imágenes adjuntas bajo la key archivo.
+
+Actualización de Seguridad (Módulo 7):
+
+PUT /api/usuarios/:id - (Protegido) Requiere Token JWT en la cabecera.
+
+DELETE /api/usuarios/:id - (Protegido) Requiere Token JWT en la cabecera.
+
+3. Decisiones Técnicas
+Abstracción del Secreto JWT: La firma de los tokens se maneja a través de la variable de entorno JWT_SECRET, asegurando que la clave criptográfica nunca se exponga en el código fuente.
+
+Carpetas Estáticas: Se ha configurado Express (express.static) para exponer de manera segura el directorio uploads/, permitiendo que un cliente externo pueda renderizar las imágenes subidas al servidor.
+
+Consistencia de Respuestas: Todos los endpoints continúan el estándar REST adoptado (estado HTTP correcto, formato JSON con campos status, message, y data o token).
+
+4. Instalación y Ejecución Local
+Para clonar y ejecutar este proyecto en tu entorno local, sigue estos pasos:
+
+a) Clonar el repositorio:
+git clone https://github.com/cristianpachecodiaz/proyecto-backend-abp.git
+cd proyecto-backend-abp
+
+b) Instalar dependencias:
+npm install
+
+c) Configurar variables de entorno:
+Crea un archivo .env en la raíz del proyecto y define las siguientes variables:
+PORT=3000
+DATABASE_URL=postgres://tu_usuario:tu_contraseña@localhost:5432/proyecto_backend_db
+JWT_SECRET=tu_secreto_aqui_123
+
+d) Iniciar el servidor:
+El proyecto utiliza nodemon para el entorno de desarrollo. Levanta el servidor con:
+npm run dev
+
+
+
+---
+
+# 🗄️ Historial del Proyecto (Entregas Anteriores)
 
 **Módulo 7: ACCESO A DATOS EN APLICACIONES NODE**
 **Autor:** Cristian Pacheco Díaz
@@ -50,12 +113,6 @@ Evolucionamos de la persistencia básica en archivos a un sistema de gestión de
 * **Actualización Restringida (PUT):** Se decidió actualizar únicamente los campos `nombre` y `email` en la modificación estándar para evitar brechas de seguridad con la manipulación directa de contraseñas.
 * **Validación Previa por PK:** Operaciones críticas como eliminar o actualizar verifican siempre mediante `findByPk(id)` que el registro exista antes de solicitar una alteración a la base de datos, interceptando errores tempranamente con estados HTTP 404 controlados.
 
-<br>
-<br>
-
----
-
-# 🗄️ Historial del Proyecto (Entregas Anteriores)
 
 ## Proyecto Módulo 6: Node & Express Web App - ABP
 

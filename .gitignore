@@ -1,2 +1,13 @@
+# Dependencias
 node_modules/
+
+# Seguridad y variables de entorno
 .env
+
+# Archivos estáticos y registros locales
+logs/
+uploads/
+
+# Archivos de depuración y sistema operativo
+npm-debug.log
+.DS_Store
